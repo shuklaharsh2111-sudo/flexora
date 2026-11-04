@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root {
+    font-family: 'Inter', sans-serif;
+    color: #101827;
+    background: #101827;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    --navy: #101827;
+    --lime: #B7F34A;
+    --white: #ffffff;
+    --muted: #8993a4;
+    --border: #e6e9ee;
+    --dark-card: #192438;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-width: 320px;
+    min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+}
+
+::selection {
+    background: var(--lime);
+    color: var(--navy);
+}
