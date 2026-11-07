@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../services/api";
-
 const initialForm = {
   name: "",
   email: "",
@@ -9,7 +8,6 @@ const initialForm = {
   password: "",
   confirmPassword: "",
   role: "member",
-
   gymName: "",
   gymLogo: "",
   gymEmail: "",
@@ -20,16 +18,13 @@ const initialForm = {
   category: "Fitness",
   establishmentYear: "",
   gstNumber: "",
-
   country: "India",
   state: "",
   city: "",
   area: "",
   fullAddress: "",
   pincode: "",
-
   facilities: [],
-
   branches: [
     {
       branchName: "Main Branch",
@@ -42,11 +37,9 @@ const initialForm = {
       closingTime: "22:00",
     },
   ],
-
   gymId: "",
   branchId: "",
 };
-
 const facilityOptions = [
   "Cardio",
   "Weight Training",
@@ -58,39 +51,32 @@ const facilityOptions = [
   "Locker Facility",
   "Shower Facility",
 ];
-
 export default function Register() {
   const navigate = useNavigate();
-
   const [form, setForm] = useState(initialForm);
   const [gyms, setGyms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-
   useEffect(() => {
     api("/auth/gyms")
       .then((data) => setGyms(data.gyms || []))
       .catch(() => setGyms([]));
   }, []);
-
   const updateField = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
   };
-
   const updateBranch = (index, field, value) => {
     const updated = [...form.branches];
     updated[index] = {
       ...updated[index],
       [field]: value,
     };
-
     setForm({ ...form, branches: updated });
   };
-
   const addBranch = () => {
     setForm({
       ...form,
@@ -109,38 +95,30 @@ export default function Register() {
       ],
     });
   };
-
   const removeBranch = (index) => {
     if (form.branches.length === 1) return;
-
     setForm({
       ...form,
       branches: form.branches.filter((_, i) => i !== index),
     });
   };
-
   const toggleFacility = (facility) => {
     const updated = form.facilities.includes(facility)
       ? form.facilities.filter((item) => item !== facility)
       : [...form.facilities, facility];
-
     setForm({ ...form, facilities: updated });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
-
     if (form.password.length < 8) {
       setError("Password must contain at least 8 characters.");
       return;
     }
-
     if (form.role === "gym_owner") {
       const invalidBranch = form.branches.some(
         (branch) =>
@@ -148,15 +126,12 @@ export default function Register() {
           !branch.contact.trim() ||
           !branch.address.trim()
       );
-
       if (invalidBranch) {
         setError("Please complete all branch details.");
         return;
       }
     }
-
     setLoading(true);
-
     const payload = {
       name: form.name,
       email: form.email,
@@ -164,7 +139,6 @@ export default function Register() {
       password: form.password,
       role: form.role,
     };
-
     if (form.role === "gym_owner") {
       Object.assign(payload, {
         gymName: form.gymName,
@@ -179,7 +153,6 @@ export default function Register() {
           ? Number(form.establishmentYear)
           : null,
         gstNumber: form.gstNumber,
-
         address: {
           country: form.country,
           state: form.state,
@@ -188,7 +161,6 @@ export default function Register() {
           fullAddress: form.fullAddress,
           pincode: form.pincode,
         },
-
         facilities: form.facilities,
         branches: form.branches,
       });
@@ -196,13 +168,11 @@ export default function Register() {
       payload.gymId = form.gymId || undefined;
       payload.branchId = form.branchId || undefined;
     }
-
     try {
       const data = await api("/auth/register", {
         method: "POST",
         body: JSON.stringify(payload),
       });
-
       if (form.role === "gym_owner") {
         navigate("/gym/dashboard", {
           state: { message: data.message },
@@ -210,18 +180,15 @@ export default function Register() {
       } else {
         navigate("/member/dashboard");
       }
-
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
-
   const selectedGym = gyms.find(
     (gym) => gym._id === form.gymId
   );
-
   return (
     <div className="auth-page register-page">
       <div className="auth-brand">
@@ -230,41 +197,34 @@ export default function Register() {
           <span>FLEXORA</span>
           <small>BY FITORA</small>
         </Link>
-
         <div className="brand-content">
           <span className="eyebrow">BUILT FOR FITNESS. BUILT FOR GROWTH.</span>
-
           <h1>
             Your journey.
             <br />
             <span>Your platform.</span>
           </h1>
-
           <p>
             Whether you run a fitness business or want
             to become part of one, Flexora brings
             everything together.
           </p>
         </div>
-
         <div className="brand-footer">
           © 2026 Flexora by Fitora. All rights reserved.
         </div>
       </div>
-
       <div className="auth-form-side register-side">
         <div className="mobile-brand brand">
           <span className="brand-icon">F</span>
           FLEXORA
         </div>
-
         <div className="auth-card register-card">
           <div className="form-heading">
             <span className="form-label">GET STARTED</span>
             <h2>Create your account</h2>
             <p>Choose your account type and enter your details.</p>
           </div>
-
           <div className="role-selector">
             <button
               type="button"
@@ -280,7 +240,6 @@ export default function Register() {
                 <small>Join a fitness community</small>
               </span>
             </button>
-
             <button
               type="button"
               className={form.role === "gym_owner" ? "role-option selected" : "role-option"}
@@ -296,13 +255,11 @@ export default function Register() {
               </span>
             </button>
           </div>
-
           <form onSubmit={handleSubmit}>
             <div className="section-heading">
               <span>01</span>
               Personal Information
             </div>
-
             <div className="form-group">
               <label>Full Name *</label>
               <input
@@ -313,7 +270,6 @@ export default function Register() {
                 required
               />
             </div>
-
             <div className="form-grid">
               <div className="form-group">
                 <label>Email Address *</label>
@@ -326,7 +282,6 @@ export default function Register() {
                   required
                 />
               </div>
-
               <div className="form-group">
                 <label>Contact Number *</label>
                 <input
@@ -340,7 +295,6 @@ export default function Register() {
                 />
               </div>
             </div>
-
             <div className="form-grid">
               <div className="form-group">
                 <label>Password *</label>
@@ -354,7 +308,6 @@ export default function Register() {
                   required
                 />
               </div>
-
               <div className="form-group">
                 <label>Confirm Password *</label>
                 <div className="password-wrapper">
@@ -376,14 +329,12 @@ export default function Register() {
                 </div>
               </div>
             </div>
-
             {form.role === "gym_owner" && (
               <>
                 <div className="section-heading">
                   <span>02</span>
                   Gym Business Information
                 </div>
-
                 <div className="form-group">
                   <label>Gym Name *</label>
                   <input
@@ -394,7 +345,6 @@ export default function Register() {
                     required
                   />
                 </div>
-
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Gym Email *</label>
@@ -407,7 +357,6 @@ export default function Register() {
                       required
                     />
                   </div>
-
                   <div className="form-group">
                     <label>Gym Contact *</label>
                     <input
@@ -420,7 +369,6 @@ export default function Register() {
                     />
                   </div>
                 </div>
-
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Gym Logo URL</label>
@@ -431,7 +379,6 @@ export default function Register() {
                       onChange={updateField}
                     />
                   </div>
-
                   <div className="form-group">
                     <label>WhatsApp Number</label>
                     <input
@@ -442,7 +389,6 @@ export default function Register() {
                     />
                   </div>
                 </div>
-
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Gym Category</label>
@@ -459,7 +405,6 @@ export default function Register() {
                       <option>Other</option>
                     </select>
                   </div>
-
                   <div className="form-group">
                     <label>Establishment Year</label>
                     <input
@@ -473,7 +418,6 @@ export default function Register() {
                     />
                   </div>
                 </div>
-
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Website</label>
@@ -484,7 +428,6 @@ export default function Register() {
                       onChange={updateField}
                     />
                   </div>
-
                   <div className="form-group">
                     <label>GST Number (Optional)</label>
                     <input
@@ -495,7 +438,6 @@ export default function Register() {
                     />
                   </div>
                 </div>
-
                 <div className="form-group">
                   <label>Gym Description</label>
                   <textarea
@@ -506,12 +448,10 @@ export default function Register() {
                     rows={3}
                   />
                 </div>
-
                 <div className="section-heading">
                   <span>03</span>
                   Gym Location
                 </div>
-
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Country</label>
@@ -521,7 +461,6 @@ export default function Register() {
                       onChange={updateField}
                     />
                   </div>
-
                   <div className="form-group">
                     <label>State *</label>
                     <input
@@ -533,7 +472,6 @@ export default function Register() {
                     />
                   </div>
                 </div>
-
                 <div className="form-grid">
                   <div className="form-group">
                     <label>City *</label>
@@ -545,7 +483,6 @@ export default function Register() {
                       required
                     />
                   </div>
-
                   <div className="form-group">
                     <label>Area</label>
                     <input
@@ -556,7 +493,6 @@ export default function Register() {
                     />
                   </div>
                 </div>
-
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Pincode</label>
@@ -567,7 +503,6 @@ export default function Register() {
                       onChange={updateField}
                     />
                   </div>
-
                   <div className="form-group">
                     <label>Full Address *</label>
                     <input
@@ -579,12 +514,10 @@ export default function Register() {
                     />
                   </div>
                 </div>
-
                 <div className="section-heading">
                   <span>04</span>
                   Gym Facilities
                 </div>
-
                 <div className="facility-grid">
                   {facilityOptions.map((facility) => (
                     <label
@@ -602,17 +535,14 @@ export default function Register() {
                     </label>
                   ))}
                 </div>
-
                 <div className="section-heading">
                   <span>05</span>
                   Gym Branches
                 </div>
-
                 {form.branches.map((branch, index) => (
                   <div className="branch-card" key={index}>
                     <div className="branch-header">
                       <strong>Branch {index + 1}</strong>
-
                       {form.branches.length > 1 && (
                         <button
                           type="button"
@@ -623,7 +553,6 @@ export default function Register() {
                         </button>
                       )}
                     </div>
-
                     <div className="form-group">
                       <label>Branch Name *</label>
                       <input
@@ -635,7 +564,6 @@ export default function Register() {
                         required
                       />
                     </div>
-
                     <div className="form-grid">
                       <div className="form-group">
                         <label>Branch Contact *</label>
@@ -648,7 +576,6 @@ export default function Register() {
                           required
                         />
                       </div>
-
                       <div className="form-group">
                         <label>Manager Name</label>
                         <input
@@ -660,7 +587,6 @@ export default function Register() {
                         />
                       </div>
                     </div>
-
                     <div className="form-group">
                       <label>Branch Address *</label>
                       <input
@@ -672,7 +598,6 @@ export default function Register() {
                         required
                       />
                     </div>
-
                     <div className="form-grid">
                       <div className="form-group">
                         <label>Opening Time</label>
@@ -684,7 +609,6 @@ export default function Register() {
                           }
                         />
                       </div>
-
                       <div className="form-group">
                         <label>Closing Time</label>
                         <input
@@ -698,7 +622,6 @@ export default function Register() {
                     </div>
                   </div>
                 ))}
-
                 <button
                   type="button"
                   className="add-branch-btn"
@@ -708,14 +631,12 @@ export default function Register() {
                 </button>
               </>
             )}
-
             {form.role === "member" && (
               <>
                 <div className="section-heading">
                   <span>02</span>
                   Choose Your Gym (Optional)
                 </div>
-
                 <div className="form-group">
                   <label>Select Gym</label>
                   <select
@@ -737,7 +658,6 @@ export default function Register() {
                     ))}
                   </select>
                 </div>
-
                 {selectedGym && (
                   <div className="form-group">
                     <label>Select Branch (Optional)</label>
@@ -757,24 +677,19 @@ export default function Register() {
                 )}
               </>
             )}
-
             {error && <div className="error-message">{error}</div>}
-
             <button className="primary-btn" disabled={loading}>
               {loading ? "Creating Account..." : "Create Account"}
               <span>→</span>
             </button>
-
             <p className="terms-note">
               By creating an account, you agree to our Terms
               of Service and Privacy Policy.
             </p>
           </form>
-
           <div className="form-divider">
             <span>ALREADY REGISTERED?</span>
           </div>
-
           <p className="switch-auth">
             Already have an account?
             <Link to="/login"> Sign In</Link>
