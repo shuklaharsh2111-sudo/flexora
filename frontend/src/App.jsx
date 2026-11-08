@@ -1,23 +1,17 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
 import Login from "./components/Login";
 import Register from "./components/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
-
 import AdminDashboard from "./pages/AdminDashboard";
 import GymDashboard from "./pages/GymDashboard";
 import MemberDashboard from "./pages/MemberDashboard";
-
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
-
         <Route path="/login" element={<Login />} />
-
         <Route path="/register" element={<Register />} />
-
         <Route
           path="/admin/dashboard"
           element={
@@ -26,7 +20,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/gym/dashboard"
           element={
@@ -35,7 +28,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/member/dashboard"
           element={
@@ -44,11 +36,9 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
 }
-
 export default App;

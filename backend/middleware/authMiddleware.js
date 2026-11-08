@@ -1,39 +1,30 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-
 const protect = async(req, res, next) => {
     try {
         let token = req.cookies ?.flexora_token;
-
         if (!token && req.headers.authorization ?.startsWith("Bearer ")) {
             token = req.headers.authorization.split(" ")[1];
         }
-
         if (!token) {
             return res.status(401).json({
                 success: false,
                 message: "Please login first.",
             });
         }
-
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
         const user = await User.findById(decoded.id).select("_id role status");
-
         if (!user || user.status !== "active") {
             return res.status(401).json({
                 success: false,
                 message: "Account not available.",
             });
         }
-
         req.user = {
             id: user._id,
             role: user.role,
         };
-
         next();
-
     } catch (error) {
         return res.status(401).json({
             success: false,
@@ -41,7 +32,6 @@ const protect = async(req, res, next) => {
         });
     }
 };
-
 const authorize = (...roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {
@@ -50,9 +40,7 @@ const authorize = (...roles) => {
                 message: "You are not authorized to access this resource.",
             });
         }
-
         next();
     };
 };
-
 module.exports = { protect, authorize };
